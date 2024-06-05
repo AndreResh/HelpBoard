@@ -12,6 +12,9 @@ export class Request {
     @Column('text')
     description: string;
 
+    @Column("character varying", { array: true , nullable: true})
+    labels: string[];
+
     @Column()
     status: string;
 
