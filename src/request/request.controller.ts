@@ -16,23 +16,24 @@ export class RequestController {
     async createRequest(
         @Body('title') title: string,
         @Body('description') description: string,
+        @Body('labels') labels: string[],
         @Body('latitude') latitude: number,
         @Body('longitude') longitude: number,
         @Req() req,
     ) {
         const creator = await this.userService.findById(req.user.id);
-        return this.requestService.createRequest(title, description, latitude, longitude, creator);
+        return this.requestService.createRequest(title, description, latitude, longitude, creator, labels);
     }
 
     @UseGuards(JwtAuthGuard)
     @Get()
-    async getRequests(@Req() req) {
+    async getRequestsByUser(@Req() req) {
         return this.requestService.getRequestsByUser(req.user.id);
     }
 
     @UseGuards(JwtAuthGuard)
     @Get(':id')
-    async getRequest(@Param('id') id: number) {
+    async getRequestById(@Param('id') id: number) {
         return this.requestService.getRequestById(id);
     }
 

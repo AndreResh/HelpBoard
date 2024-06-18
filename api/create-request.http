@@ -1,10 +1,14 @@
 POST http://localhost:3000/requests
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImpvaG5AZXhhbXBsZS5jb20iLCJzdWIiOjEsInJvbGUiOiJ1c2VyIiwiaWF0IjoxNzE3NTIzMTAyLCJleHAiOjE3MTc1MjY3MDJ9.u6GfWmlDXwytT2azqvzRA441vtuKaqmxDDUPneP8uNc
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImpvaG5AZXhhbXBsZS5jb20iLCJzdWIiOjEsInJvbGUiOiJ1c2VyIiwiaWF0IjoxNzE4NzM0MzA1LCJleHAiOjE3MTg3Mzc5MDV9.gSRmXlSiCn6FNWT0Fd4is43OwtieGIpO_suoEXGagT0
 Content-Type: application/json
 
 {
   "title": "Help Needed",
   "description": "I need help with my project.",
+  "labels": [
+    "MATERIAL",
+    "PHYSICAL"
+  ],
   "latitude": 37.7749,
   "longitude": -122.4194
 }
