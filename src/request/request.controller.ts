@@ -3,6 +3,7 @@ import { RequestService } from './request.service';
 import { JwtAuthGuard } from '../user/jwt-auth.guard';
 import { UserService } from '../user/user.service';
 import { Request } from './request.entity';
+import {CreateRequestDTO} from "./requestDTO";
 
 @Controller('requests')
 export class RequestController {
@@ -14,15 +15,11 @@ export class RequestController {
     @UseGuards(JwtAuthGuard)
     @Post()
     async createRequest(
-        @Body('title') title: string,
-        @Body('description') description: string,
-        @Body('labels') labels: string[],
-        @Body('latitude') latitude: number,
-        @Body('longitude') longitude: number,
+        @Body() createRequestDTO: CreateRequestDTO,
         @Req() req,
     ) {
         const creator = await this.userService.findById(req.user.id);
-        return this.requestService.createRequest(title, description, latitude, longitude, creator, labels);
+        return this.requestService.createRequest(creator, createRequestDTO);
     }
 
     @UseGuards(JwtAuthGuard)

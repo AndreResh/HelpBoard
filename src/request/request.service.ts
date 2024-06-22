@@ -4,6 +4,7 @@ import {Repository} from 'typeorm';
 import {Request} from './request.entity';
 import {User} from '../user/user.entity';
 import {getListOfType} from "./label";
+import {CreateRequestDTO} from "./requestDTO";
 
 @Injectable()
 export class RequestService {
@@ -13,7 +14,8 @@ export class RequestService {
     ) {
     }
 
-    async createRequest(title: string, description: string, latitude: number, longitude: number, creator: User, labels: string []): Promise<Request> {
+    async createRequest(creator: User, createRequestDTO: CreateRequestDTO): Promise<Request> {
+        const {title, description,labels, latitude, longitude} = createRequestDTO
         const newRequest = this.requestRepository.create({
             title: title,
             description: description,
