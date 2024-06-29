@@ -6,9 +6,11 @@ import {ConfigModule} from "@nestjs/config";
 import configurations from './configuration';
 import {ChatModule} from "./chat/chat.module";
 import {MessageModule} from "./chat/message.module";
+import {EventEmitterModule} from "@nestjs/event-emitter";
 
 @Module({
     imports: [
+        EventEmitterModule.forRoot(),
         ConfigModule.forRoot({isGlobal: true, load: [configurations]}),
         TypeOrmModule.forRoot({
             type: 'postgres',

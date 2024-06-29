@@ -1,6 +1,7 @@
-import {Entity, PrimaryGeneratedColumn, Column, ManyToOne} from 'typeorm';
+import {Entity, PrimaryGeneratedColumn, Column, ManyToOne, ManyToMany, JoinTable, OneToMany} from 'typeorm';
 import {User} from '../user/user.entity';
 import {HelpType} from './label';
+import {RequestInvite} from "./request-invite.entity";
 
 @Entity()
 export class Request {
@@ -19,6 +20,9 @@ export class Request {
     @Column()
     status: string;
 
+    @Column()
+    executorsCount: number;
+
     @Column('decimal', {precision: 9, scale: 6, nullable: true})
     latitude: number;
 
@@ -28,6 +32,19 @@ export class Request {
     @ManyToOne(() => User, user => user.requestsCreated)
     creator: User;
 
-    @ManyToOne(() => User, user => user.requestsAssigned, {nullable: true})
-    executor: User;
+    @ManyToMany(() => User, user => user.requestsExecuted)
+    @JoinTable({
+        name: 'request_executors',
+        joinColumn: {
+            name: 'request_id',
+            referencedColumnName: 'id',
+        },
+        inverseJoinColumn: {
+            name: 'user_id',
+            referencedColumnName: 'id',
+        },
+    })
+    executors: User[];
+    @OneToMany(() => RequestInvite, invite => invite.request)
+    invites: RequestInvite[];
 }

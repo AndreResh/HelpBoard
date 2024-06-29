@@ -1,5 +1,6 @@
-import {Entity, PrimaryGeneratedColumn, Column, OneToMany} from 'typeorm';
+import {Entity, PrimaryGeneratedColumn, Column, OneToMany, ManyToMany} from 'typeorm';
 import { Request } from '../request/request.entity';
+import {RequestInvite} from "../request/request-invite.entity";
 
 @Entity()
 export class User {
@@ -21,6 +22,9 @@ export class User {
     @OneToMany(() => Request, request => request.creator)
     requestsCreated: Request[];
 
-    @OneToMany(() => Request, request => request.executor)
-    requestsAssigned: Request[];
+    @ManyToMany(() => Request, request => request.executors)
+    requestsExecuted: Request[];
+
+    @OneToMany(() => RequestInvite, invite => invite.user)
+    invites: RequestInvite[];
 }

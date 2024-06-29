@@ -3,7 +3,8 @@ import { RequestService } from './request.service';
 import { JwtAuthGuard } from '../user/jwt-auth.guard';
 import { UserService } from '../user/user.service';
 import { Request } from './request.entity';
-import {CreateRequestDTO} from "./requestDTO";
+import {RequestDTO} from "./requestDTO";
+import {RequestInvite} from "./request-invite.entity";
 
 @Controller('requests')
 export class RequestController {
@@ -15,7 +16,7 @@ export class RequestController {
     @UseGuards(JwtAuthGuard)
     @Post()
     async createRequest(
-        @Body() createRequestDTO: CreateRequestDTO,
+        @Body() createRequestDTO: RequestDTO,
         @Req() req,
     ) {
         const creator = await this.userService.findById(req.user.id);
@@ -36,7 +37,7 @@ export class RequestController {
 
     @UseGuards(JwtAuthGuard)
     @Put(':id')
-    async updateRequest(@Param('id') id: number, @Body() updateData: Partial<Request>) {
+    async updateRequest(@Param('id') id: number, @Body() updateData: RequestDTO) {
         return this.requestService.updateRequest(id, updateData);
     }
 
@@ -46,10 +47,14 @@ export class RequestController {
         await this.requestService.deleteRequest(id);
     }
 
-    @UseGuards(JwtAuthGuard)
-    @Put(':id/assign')
-    async assignExecutor(@Param('id') id: number, @Req() req) {
-        const executor = await this.userService.findById(req.user.id);
-        return this.requestService.assignExecutor(id, executor);
+    @Post(':id/offer-help')
+    async offerHelp(@Param('id') id: number, @Body('userId') userId: number): Promise<RequestInvite> {
+        return this.requestService.sendInvite(+id, userId);
     }
+
+    @Post('accept-help/:inviteId')
+    async acceptHelp(@Param('inviteId') inviteId: number, @Body('userId') userId: number): Promise<Request> {
+        return this.requestService.acceptInvite(+inviteId, userId);
+    }
+    //TODO на заявке видно количество тех кто предлагает помощь, можно либо принять, либо отклонить(отклонение тоже надо сделать)
 }
