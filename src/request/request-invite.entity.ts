@@ -14,5 +14,5 @@ export class RequestInvite {
     user: User;
 
     @Column({ default: 'pending' })
-    status: string;
+    status: 'pending' | 'accepted' | 'rejected';
 }

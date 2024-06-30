@@ -60,12 +60,6 @@ export class RequestService {
         await this.requestRepository.delete(id);
     }
 
-    async assignExecutor(requestId: number, executor: User): Promise<Request> {
-        const request = await this.getRequestById(requestId);
-        request.executors.push(executor);
-        return this.requestRepository.save(request);
-    }
-
     async sendInvite(requestId: number, userId: number): Promise<RequestInvite> {
         const request = await this.requestRepository.findOne({where: {id: requestId}});
         if (!request) {
@@ -100,9 +94,37 @@ export class RequestService {
         invite.status = 'accepted';
         await this.requestInviteRepository.save(invite);
 
-        const request = await this.requestRepository.findOne({where: {id: invite.request.id }});
+        const request = await this.requestRepository.findOne({where: {id: invite.request.id}});
         request.executors.push(invite.user);
         return this.requestRepository.save(request);
     }
 
+    async rejectInvite(inviteId: number, userId: number): Promise<void> {
+        const invite = await this.requestInviteRepository.findOne({where: {id: inviteId}});
+        if (!invite) {
+            throw new NotFoundException('Invite not found');
+        }
+
+        if (invite.user.id !== userId) {
+            throw new UnauthorizedException('You are not the invited user');
+        }
+
+        invite.status = 'rejected';
+        await this.requestInviteRepository.save(invite);
+    }
+
+    async getInvitesByStatus(userId: number, status?: 'pending' | 'accepted' | 'rejected'): Promise<RequestInvite[]> {
+        const query = this.requestInviteRepository.createQueryBuilder('invite')
+            .leftJoinAndSelect('invite.request', 'request')
+            .leftJoinAndSelect('invite.user', 'user')
+            .where('invite.user.id = :userId', { userId });
+
+        if (status) {
+            query.andWhere('invite.status = :status', { status });
+        } else {
+            query.andWhere('invite.status != :rejected', { rejected: 'rejected' });
+        }
+
+        return query.getMany();
+    }
 }
